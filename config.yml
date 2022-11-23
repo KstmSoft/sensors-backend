@@ -1,0 +1,3 @@
+port:
+  tcp: 8080
+  socket: 9090
