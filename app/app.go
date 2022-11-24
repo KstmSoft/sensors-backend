@@ -26,6 +26,7 @@ func New() *App {
 func (a *App) routes() {
 	a.Router.HandleFunc("/", controllers.Index()).Methods("GET")
 	a.Router.HandleFunc("/sensor", controllers.GetSensors()).Methods("GET")
+	a.Router.HandleFunc("/sensor/{id}", controllers.GetSensorById()).Methods("GET")
 	a.Router.HandleFunc("/sensor", controllers.AddSensor()).Methods("POST")
 	a.Router.HandleFunc("/sensor/{id}", controllers.DeleteSensor()).Methods("DELETE")
 	a.Router.HandleFunc("/sensor/{id}", controllers.UpdateSensor()).Methods("PUT")

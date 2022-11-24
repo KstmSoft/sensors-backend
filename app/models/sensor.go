@@ -39,6 +39,19 @@ func GetSensors() ([]Sensor, error) {
 	return sensors, nil
 }
 
+func GetSensorById(id string) (Sensor, error) {
+	var sensor Sensor
+	db, err := sql.Open("sqlite3", helpers.Currentdir()+"/database")
+	if err != nil {
+		return Sensor{}, err
+	}
+	err = db.QueryRow("SELECT * FROM sensors WHERE id=?", id).Scan(&sensor.Id, &sensor.Tag, &sensor.Enabled, &sensor.Address, &sensor.Refreshrate)
+	if err != nil {
+		return Sensor{}, err
+	}
+	return sensor, nil
+}
+
 func AddSensor(sensor Sensor) (int, error) {
 	db, err := sql.Open("sqlite3", helpers.Currentdir()+"/database")
 	if err != nil {

@@ -27,6 +27,24 @@ func GetSensors() http.HandlerFunc {
 	}
 }
 
+func GetSensorById() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		id := params["id"]
+		sensor, err := models.GetSensorById(id)
+		if httpError(err, w) {
+			return
+		}
+		json, err := json.Marshal(sensor)
+		if httpError(err, w) {
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(json)
+	}
+}
+
 func AddSensor() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var sensor models.Sensor

@@ -39,7 +39,6 @@ func ReaderBot(sensor models.Sensor) *gobot.Robot {
 	work := func() {
 		gobot.Every(time.Second, func() {
 			result, _ := driver.Read(address)
-			fmt.Println(sensor.Address, result)
 			message := new(gosf.Message)
 			message.Success = true
 			message.Text = fmt.Sprint(result)
