@@ -45,6 +45,7 @@ func (p *program) Start() error {
 
 		c := cors.New(cors.Options{
 			AllowedOrigins:   []string{"*"},
+			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 			AllowCredentials: true,
 		})
 

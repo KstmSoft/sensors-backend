@@ -11,6 +11,10 @@ type Sensor struct {
 	Enabled     bool   `json:"enabled"`
 	Address     string `json:"address"`
 	Refreshrate int    `json:"refreshrate"`
+	Formula     string `json:"formula"`
+	Symbol      string `json:"symbol"`
+	MaxValue    int    `json:"max_value"`
+	Color       string `json:"color"`
 }
 
 type Response struct {
@@ -30,7 +34,7 @@ func GetSensors() ([]Sensor, error) {
 	}
 	sensors := []Sensor{}
 	for rows.Next() {
-		err = rows.Scan(&sensor.Id, &sensor.Tag, &sensor.Enabled, &sensor.Address, &sensor.Refreshrate)
+		err = rows.Scan(&sensor.Id, &sensor.Tag, &sensor.Enabled, &sensor.Address, &sensor.Refreshrate, &sensor.Formula, &sensor.Symbol, &sensor.MaxValue, &sensor.Color)
 		if err != nil {
 			return nil, err
 		}
@@ -45,7 +49,7 @@ func GetSensorById(id string) (Sensor, error) {
 	if err != nil {
 		return Sensor{}, err
 	}
-	err = db.QueryRow("SELECT * FROM sensors WHERE id=?", id).Scan(&sensor.Id, &sensor.Tag, &sensor.Enabled, &sensor.Address, &sensor.Refreshrate)
+	err = db.QueryRow("SELECT * FROM sensors WHERE id=?", id).Scan(&sensor.Id, &sensor.Tag, &sensor.Enabled, &sensor.Address, &sensor.Refreshrate, &sensor.Formula, &sensor.Symbol, &sensor.MaxValue, &sensor.Color)
 	if err != nil {
 		return Sensor{}, err
 	}
@@ -57,11 +61,11 @@ func AddSensor(sensor Sensor) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	stmt, err := db.Prepare("INSERT INTO sensors (tag, enabled, address, refreshrate) values(?,?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO sensors (tag, enabled, address, refreshrate, formula, symbol, max_value, color) values(?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return -1, err
 	}
-	res, err := stmt.Exec(&sensor.Tag, sensor.Enabled, sensor.Address, sensor.Refreshrate)
+	res, err := stmt.Exec(sensor.Tag, sensor.Enabled, sensor.Address, sensor.Refreshrate, sensor.Formula, sensor.Symbol, sensor.MaxValue, sensor.Color)
 	if err != nil {
 		return -1, err
 	}
@@ -72,16 +76,16 @@ func AddSensor(sensor Sensor) (int, error) {
 	return int(inserted), nil
 }
 
-func UpdateSensor(id string, sensor Sensor) error {
+func UpdateSensor(sensor Sensor) error {
 	db, err := sql.Open("sqlite3", helpers.Currentdir()+"/database")
 	if err != nil {
 		return err
 	}
-	stmt, err := db.Prepare("UPDATE sensors SET tag=?, enabled=?, address=?, refreshrate=? WHERE id=?")
+	stmt, err := db.Prepare("UPDATE sensors SET tag=?, enabled=?, address=?, refreshrate=?, formula=?, symbol=?, max_value=?, color=? WHERE id=?")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(&sensor.Tag, sensor.Enabled, sensor.Address, sensor.Refreshrate, id)
+	_, err = stmt.Exec(sensor.Tag, sensor.Enabled, sensor.Address, sensor.Refreshrate, sensor.Formula, sensor.Symbol, sensor.MaxValue, sensor.Color, sensor.Id)
 	if err != nil {
 		return err
 	}

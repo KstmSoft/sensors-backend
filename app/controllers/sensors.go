@@ -88,19 +88,21 @@ func DeleteSensor() http.HandlerFunc {
 
 func UpdateSensor() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		params := mux.Vars(r)
-		id := params["id"]
 		var sensor models.Sensor
 		err := json.NewDecoder(r.Body).Decode(&sensor)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = models.UpdateSensor(id, sensor)
+		if sensor.Id <= 0 {
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
+			return
+		}
+		err = models.UpdateSensor(sensor)
 		if httpError(err, w) {
 			return
 		}
-		response := models.Response{Success: true, Id: id}
+		response := models.Response{Success: true, Id: fmt.Sprint(sensor.Id)}
 		json, err := json.Marshal(response)
 		if httpError(err, w) {
 			return
