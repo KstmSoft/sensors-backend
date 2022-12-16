@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"sensors/app/models"
+	"sensors/app/services"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -50,6 +52,7 @@ func AddSensor() http.HandlerFunc {
 		var sensor models.Sensor
 		err := json.NewDecoder(r.Body).Decode(&sensor)
 		if err != nil {
+			log.Println(err.Error())
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -57,6 +60,7 @@ func AddSensor() http.HandlerFunc {
 		if httpError(err, w) {
 			return
 		}
+		go services.AddSensorRuntime(fmt.Sprint(inserted), sensor)
 		json, err := json.Marshal(models.Response{Success: true, Id: fmt.Sprint(inserted)})
 		if httpError(err, w) {
 			return
@@ -94,7 +98,8 @@ func UpdateSensor() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		if sensor.Id <= 0 {
+		id, _ := strconv.Atoi(sensor.Id)
+		if id <= 0 {
 			http.Error(w, "Invalid ID", http.StatusBadRequest)
 			return
 		}

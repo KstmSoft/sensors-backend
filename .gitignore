@@ -1,3 +1,4 @@
 database
 sensors
 sensors.service
+*.log

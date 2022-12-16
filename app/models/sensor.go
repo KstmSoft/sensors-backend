@@ -6,7 +6,7 @@ import (
 )
 
 type Sensor struct {
-	Id          int    `json:"id"`
+	Id          string `json:"id"`
 	Tag         string `json:"tag"`
 	Enabled     bool   `json:"enabled"`
 	Address     string `json:"address"`

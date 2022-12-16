@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/Pramod-Devireddy/go-exprtk"
 	"github.com/spf13/viper"
 )
 
@@ -41,4 +42,25 @@ func ConvertToVoltage(value int) float64 {
 	maxVolt := viper.GetInt("maxVolt")
 	voltage := (float64(maxVolt) / MaximumValueBits()) * float64(value)
 	return float64(voltage)
+}
+
+func ComputeFormula(formula string, value float64) float64 {
+	if formula == "" {
+		return 0
+	}
+	exprtkObj := exprtk.NewExprtk()
+	defer exprtkObj.Delete()
+
+	exprtkObj.SetExpression(formula)
+	exprtkObj.AddDoubleVariable("vout")
+
+	err := exprtkObj.CompileExpression()
+	if err != nil {
+		log.Println(err.Error() + formula)
+		return -1
+	}
+
+	exprtkObj.SetDoubleVariableValue("vout", value)
+
+	return exprtkObj.GetEvaluatedValue()
 }
