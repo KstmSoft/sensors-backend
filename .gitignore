@@ -2,3 +2,4 @@ database
 sensors
 sensors.service
 *.log
+.idea/

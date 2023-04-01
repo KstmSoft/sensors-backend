@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"log"
-	"os"
 	"sensors/app/helpers"
 	"sensors/app/models"
 	"strconv"
@@ -42,20 +41,23 @@ func ReaderBot(id string, sensor models.Sensor) *gobot.Robot {
 		return nil
 	}
 
-	f, err := os.OpenFile(sensor.Address+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	work := func() {
 		gobot.Every(time.Second, func() {
 			result, _ := driver.Read(address)
 			updatedSensor, _ := models.GetSensorById(id)
-			voltage := helpers.ConvertToVoltage(result)
+			voltageRaw := helpers.ConvertToVoltage(result)
+
+			computedValue := fmt.Sprint(helpers.ComputeFormula(updatedSensor.Formula, voltageRaw))
+			voltageValue := fmt.Sprint(voltageRaw)
+
+			// Building response
 			message := new(gosf.Message)
 			message.Success = true
-			message.Body = map[string]interface{}{"computed": fmt.Sprint(helpers.ComputeFormula(updatedSensor.Formula, voltage)), "voltage": fmt.Sprint(voltage)}
-			f.WriteString(fmt.Sprint(message.Body) + "\n")
+			message.Body = map[string]interface{}{"computed": computedValue, "voltage": voltageValue}
+
+			// Write to CSV
+			WriteCSV(sensor.Address, []string{computedValue, voltageValue})
+
 			gosf.Broadcast("", sensor.Address, message)
 		})
 	}
