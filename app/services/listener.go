@@ -49,6 +49,7 @@ func ReaderBot(id string, sensor models.Sensor) *gobot.Robot {
 
 			computedValue := fmt.Sprint(helpers.ComputeFormula(updatedSensor.Formula, voltageRaw))
 			voltageValue := fmt.Sprint(voltageRaw)
+			time := fmt.Sprint(time.Now().Unix())
 
 			// Building response
 			message := new(gosf.Message)
@@ -56,7 +57,7 @@ func ReaderBot(id string, sensor models.Sensor) *gobot.Robot {
 			message.Body = map[string]interface{}{"computed": computedValue, "voltage": voltageValue}
 
 			// Write to CSV
-			WriteCSV(sensor.Address, []string{computedValue, voltageValue})
+			WriteCSV(sensor.Address, []string{time, computedValue})
 
 			gosf.Broadcast("", sensor.Address, message)
 		})

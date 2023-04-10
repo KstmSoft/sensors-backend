@@ -1,0 +1,11 @@
+CREATE TABLE sensors (
+	id INTEGER PRIMARY KEY,
+	tag VARCHAR(64) NOT NULL,
+	enabled TINYINT NULL,
+	address VARCHAR(2) NOT NULL UNIQUE,
+	refreshrate INTEGER NOT NULL,
+	formula TEXT NULL,
+	symbol VARCHAR(16) NULL,
+	max_value INTEGER NULL,
+	color VARCHAR(7) NULL
+);
