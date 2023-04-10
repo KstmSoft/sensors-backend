@@ -3,4 +3,4 @@ port:
   socket: 9090
 maxVolt: 5
 bits: 10
-samples_folder: "/tmp/"
+samples_folder: "/home/admin/logs"

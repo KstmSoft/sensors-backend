@@ -42,7 +42,7 @@ func ReaderBot(id string, sensor models.Sensor) *gobot.Robot {
 	}
 
 	work := func() {
-		gobot.Every(time.Second, func() {
+		gobot.Every(time.Duration(sensor.Refreshrate)*time.Second, func() {
 			result, _ := driver.Read(address)
 			updatedSensor, _ := models.GetSensorById(id)
 			voltageRaw := helpers.ConvertToVoltage(result)

@@ -10,7 +10,7 @@ type Sensor struct {
 	Tag         string `json:"tag"`
 	Enabled     bool   `json:"enabled"`
 	Address     string `json:"address"`
-	Refreshrate int    `json:"refreshrate"`
+	Refreshrate int    `json:"refreshrate,string"`
 	Formula     string `json:"formula"`
 	Symbol      string `json:"symbol"`
 	MaxValue    int    `json:"max_value"`

@@ -30,6 +30,7 @@ func (a *App) routes() {
 	a.Router.HandleFunc("/sensor", controllers.AddSensor()).Methods("POST")
 	a.Router.HandleFunc("/sensor/{id}", controllers.DeleteSensor()).Methods("DELETE")
 	a.Router.HandleFunc("/sensor", controllers.UpdateSensor()).Methods("PUT")
+	a.Router.HandleFunc("/logs/{id}", controllers.GetLogs()).Methods("GET")
 	a.Router.HandleFunc("/system/poweroff", controllers.PowerOff()).Methods("POST")
 	a.Router.HandleFunc("/system/restart", controllers.Restart()).Methods("POST")
 
